@@ -18,7 +18,7 @@ def text_to_node_html_node(text_node):
         case _:
             raise Exception("unsupported text type")
         
-def split__nodes_delimeter(old_nodes, delimiter, text_type):
+def split_nodes_delimeter(old_nodes, delimiter, text_type):
     new_nodes = []
     for node in old_nodes:
         start = 0

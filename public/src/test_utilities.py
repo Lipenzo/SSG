@@ -47,7 +47,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_no_delim_in_text(self):
         text_node = TextNode("some text", TextType.TEXT)
         input_list = [text_node]
-        output = split__nodes_delimeter(input_list, "'", TextType.CODE) 
+        output = split_nodes_delimeter(input_list, "'", TextType.CODE) 
         self.assertEqual(str(output), str(input_list))
     
     def test_split_delim_in_midle(self):
@@ -56,7 +56,7 @@ class TestTextNode(unittest.TestCase):
         answer_node2 = TextNode("code inside", TextType.CODE)
         answer_node3 = TextNode(" text", TextType.TEXT)
         input_list = [answer_node1, answer_node2, answer_node3]
-        output = split__nodes_delimeter([text_node], "'", TextType.CODE) 
+        output = split_nodes_delimeter([text_node], "'", TextType.CODE) 
         self.assertEqual(str(output), str(input_list))
 
     def test_split_delim_in_front(self):
@@ -64,7 +64,7 @@ class TestTextNode(unittest.TestCase):
         answer_node2 = TextNode("some code inside", TextType.CODE)
         answer_node3 = TextNode(" text", TextType.TEXT)
         input_list = [answer_node2, answer_node3]
-        output = split__nodes_delimeter([text_node], "'", TextType.CODE) 
+        output = split_nodes_delimeter([text_node], "'", TextType.CODE) 
         self.assertEqual(str(output), str(input_list))
 
     def test_split_delim_in_end(self):
@@ -72,7 +72,7 @@ class TestTextNode(unittest.TestCase):
         answer_node2 = TextNode("some code inside ", TextType.TEXT)
         answer_node3 = TextNode("text", TextType.CODE)
         input_list = [answer_node2, answer_node3]
-        output = split__nodes_delimeter([text_node], "'", TextType.CODE) 
+        output = split_nodes_delimeter([text_node], "'", TextType.CODE) 
         self.assertEqual(str(output), str(input_list))
 
     def test_multi_split(self):
@@ -82,7 +82,7 @@ class TestTextNode(unittest.TestCase):
         answer_node2 = TextNode("some code inside ", TextType.TEXT)
         answer_node3 = TextNode("text", TextType.CODE)
         answer_list = [answer_node2, answer_node3,text_node2]
-        output_list = split__nodes_delimeter(input_list, "'", TextType.CODE) 
+        output_list = split_nodes_delimeter(input_list, "'", TextType.CODE) 
         self.assertEqual(str(answer_list), str(output_list))
 
     def test_split_sintax_err(self):
@@ -90,7 +90,7 @@ class TestTextNode(unittest.TestCase):
         text_node2 = TextNode("litle *fox* jumped over mule", TextType.TEXT)
         input_list = [text_node1, text_node2]
         with self.assertRaises(SyntaxError):
-            output_list = split__nodes_delimeter(input_list, "'", TextType.CODE) 
+            output_list = split_nodes_delimeter(input_list, "'", TextType.CODE) 
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 from leafnode import LeafNode
 from textnode import TextNode, TextType
+import re
 
 def text_to_node_html_node(text_node):
     match text_node.text_type:
@@ -18,7 +19,7 @@ def text_to_node_html_node(text_node):
         case _:
             raise Exception("unsupported text type")
         
-def split_nodes_delimeter(old_nodes, delimiter, text_type):
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
     new_nodes = []
     for node in old_nodes:
         start = 0
@@ -40,3 +41,12 @@ def split_nodes_delimeter(old_nodes, delimiter, text_type):
                 new_nodes.append(TextNode(node.text[start:index], node.text_type))
                 start = index
     return new_nodes
+
+def extract_markdown_images(text):
+    pattern = r"!\[(.*?)\]\((.*?)\)"
+    return re.findall(pattern, text)
+
+def extract_markdown_links(text):
+    pattern = r"\[(.*?)\]\((.*?)\)"
+    return re.findall(pattern, text)
+

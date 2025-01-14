@@ -50,3 +50,29 @@ def extract_markdown_links(text):
     pattern = r"\[(.*?)\]\((.*?)\)"
     return re.findall(pattern, text)
 
+def split_nodes_pattern(old_nodes, pattern, textnode_expr):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type != TextType.TEXT:
+            new_nodes.append(node)
+            continue
+        sections = re.split(pattern, node.text)
+        if (len(sections) - 1) % 3 != 0:
+            raise ValueError("Given text is unproperly formmated")
+        if sections[0] != "":
+            new_nodes.append(TextNode(sections[0], TextType.TEXT))
+        for i in range(1, len(sections), 3):
+            new_nodes.append(textnode_expr(sections[i], sections[i + 1]))
+            if sections[i + 2] != "":
+                new_nodes.append(TextNode(sections[i + 2], TextType.TEXT))
+    return new_nodes
+
+def split_nodes_image(old_nodes):
+    pattern = r"!\[(.*?)\]\((.*?)\)"
+    expr = lambda a, b: TextNode("", TextType.IMAGE, {"alt":a, "src":b})
+    return split_nodes_pattern(old_nodes, pattern, expr)
+
+def split_nodes_link(old_nodes):
+    pattern = r"\[(.*?)\]\((.*?)\)"
+    expr = lambda a, b: TextNode(a, TextType.LINK, {"href":b})
+    return split_nodes_pattern(old_nodes, pattern, expr)

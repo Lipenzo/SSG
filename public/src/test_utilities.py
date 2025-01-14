@@ -1,6 +1,6 @@
 import unittest
 
-from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
+from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -103,6 +103,56 @@ class TestTextNode(unittest.TestCase):
         answer = extract_markdown_links(text)
         expected_answer = [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
         self.assertEqual(str(answer), str(expected_answer))
+
+    def test_split_node_image_onlytext(self):
+        node = TextNode("some text", TextType.TEXT)
+        return_nodes = split_nodes_image([node])
+        self.assertEqual(str([node]), str(return_nodes))
+    
+    def test_split_node_image_onlytextmulti(self):
+        node = TextNode("some text", TextType.TEXT)
+        node2 = TextNode("another text", TextType.TEXT)
+        nodes = [node, node2]
+        return_nodes = split_nodes_image(nodes)
+        self.assertEqual(str(nodes), str(return_nodes))
+
+    def test_split_node_image_onlytextmultitype(self):
+        node = TextNode("some text", TextType.TEXT)
+        node2 = TextNode("another text", TextType.TEXT)
+        node3 = TextNode("![text](imgae url) some more text", TextType.CODE)
+        nodes = [node, node2, node3]
+        return_nodes = split_nodes_image(nodes)
+        self.assertEqual(str(nodes), str(return_nodes))
+
+    def test_split_node_image_doingsplit(self):
+        node = TextNode("some text", TextType.TEXT)
+        node2 = TextNode("another text", TextType.TEXT)
+        node3 = TextNode("![text](image url) some more text", TextType.TEXT)
+        node3_output1 = TextNode("", TextType.IMAGE, {"alt":"text", "src":"image url"})
+        node3_output2 = TextNode(" some more text", TextType.TEXT)
+        nodes = [node, node2, node3]
+        nodes_expected = [node, node2] + [node3_output1, node3_output2]
+        return_nodes = split_nodes_image(nodes)
+        self.assertEqual(str(nodes_expected), str(return_nodes))
+
+    def test_split_node_image_onlyimg(self):
+        node3 = TextNode("![text](image url)", TextType.TEXT)
+        node3_output1 = TextNode("", TextType.IMAGE, {"alt":"text", "src":"image url"})
+        nodes = [node3]
+        nodes_expected = [node3_output1]
+        return_nodes = split_nodes_image(nodes)
+        self.assertEqual(str(nodes_expected), str(return_nodes))
+
+    def test_split_node_link_doingsplit(self):
+        node = TextNode("some text", TextType.TEXT)
+        node2 = TextNode("another text", TextType.TEXT)
+        node3 = TextNode("[text](image url) some more text", TextType.TEXT)
+        node3_output1 = TextNode("text", TextType.LINK, {"href":"image url"})
+        node3_output2 = TextNode(" some more text", TextType.TEXT)
+        nodes = [node, node2, node3]
+        nodes_expected = [node, node2] + [node3_output1, node3_output2]
+        return_nodes = split_nodes_link(nodes)
+        self.assertEqual(str(nodes_expected), str(return_nodes))
 
 if __name__ == "__main__":
     unittest.main()

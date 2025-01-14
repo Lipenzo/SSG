@@ -1,6 +1,6 @@
 import unittest
 
-from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -74,6 +74,16 @@ class TestTextNode(unittest.TestCase):
         input_list = [answer_node2, answer_node3]
         output = split_nodes_delimiter([text_node], "'", TextType.CODE) 
         self.assertEqual(str(output), str(input_list))
+    
+    def test_split_delim_bold(self):
+        text_node = TextNode("This is **text** with an *italic* word and a ", TextType.TEXT)
+        expected_nodes = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an *italic* word and a ", TextType.TEXT)
+        ]
+        output_nodes = split_nodes_delimiter([text_node], "**", TextType.BOLD)
+        self.assertEqual(str(output_nodes), str(expected_nodes))
 
     def test_multi_split(self):
         text_node1 = TextNode("some code inside 'text'", TextType.TEXT)
@@ -128,7 +138,7 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("some text", TextType.TEXT)
         node2 = TextNode("another text", TextType.TEXT)
         node3 = TextNode("![text](image url) some more text", TextType.TEXT)
-        node3_output1 = TextNode("", TextType.IMAGE, {"alt":"text", "src":"image url"})
+        node3_output1 = TextNode("text", TextType.IMAGE, "image url")
         node3_output2 = TextNode(" some more text", TextType.TEXT)
         nodes = [node, node2, node3]
         nodes_expected = [node, node2] + [node3_output1, node3_output2]
@@ -137,7 +147,7 @@ class TestTextNode(unittest.TestCase):
 
     def test_split_node_image_onlyimg(self):
         node3 = TextNode("![text](image url)", TextType.TEXT)
-        node3_output1 = TextNode("", TextType.IMAGE, {"alt":"text", "src":"image url"})
+        node3_output1 = TextNode("text", TextType.IMAGE, "image url")
         nodes = [node3]
         nodes_expected = [node3_output1]
         return_nodes = split_nodes_image(nodes)
@@ -147,12 +157,29 @@ class TestTextNode(unittest.TestCase):
         node = TextNode("some text", TextType.TEXT)
         node2 = TextNode("another text", TextType.TEXT)
         node3 = TextNode("[text](image url) some more text", TextType.TEXT)
-        node3_output1 = TextNode("text", TextType.LINK, {"href":"image url"})
+        node3_output1 = TextNode("text", TextType.LINK, "image url")
         node3_output2 = TextNode(" some more text", TextType.TEXT)
         nodes = [node, node2, node3]
         nodes_expected = [node, node2] + [node3_output1, node3_output2]
         return_nodes = split_nodes_link(nodes)
         self.assertEqual(str(nodes_expected), str(return_nodes))
+
+    def test_text_nodes_to_text_example(self):
+        input_text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        expected_nodes = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+        ]
+        function_nodes = text_to_text_nodes(input_text)
+        self.assertEqual(str(function_nodes), str(expected_nodes))
 
 if __name__ == "__main__":
     unittest.main()

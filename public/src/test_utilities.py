@@ -1,6 +1,6 @@
 import unittest
 
-from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes
+from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes, markdown_to_blocks
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -180,6 +180,25 @@ class TestTextNode(unittest.TestCase):
         ]
         function_nodes = text_to_text_nodes(input_text)
         self.assertEqual(str(function_nodes), str(expected_nodes))
+
+    def test_markdown_to_blocks1(self):
+        imput_markdown =  "# This is a heading\n\nThis is a paragraph of text. It has some **bold** and *italic* words inside of it.\n\n* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+        output_block1 = "# This is a heading"
+        output_block2 = "This is a paragraph of text. It has some **bold** and *italic* words inside of it."
+        output_block3 = "* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+        output_list = [output_block1, output_block2, output_block3]
+        answer_block = markdown_to_blocks(imput_markdown)
+        self.assertEqual(output_list, answer_block)
+
+    def test_markdown_to_blocks1(self):
+        imput_markdown =  "          \n\n            # This is a heading\n\nThis is a paragraph of text. It has some **bold** and *italic* words inside of it.\n\n\n\n   \n\n\n\n* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+        output_block1 = "# This is a heading"
+        output_block2 = "This is a paragraph of text. It has some **bold** and *italic* words inside of it."
+        output_block3 = "* This is the first list item in a list block\n* This is a list item\n* This is another list item"
+        output_list = [output_block1, output_block2, output_block3]
+        answer_block = markdown_to_blocks(imput_markdown)
+        self.assertEqual(output_list, answer_block)
+
 
 if __name__ == "__main__":
     unittest.main()

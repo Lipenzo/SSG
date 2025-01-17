@@ -87,3 +87,10 @@ def markdown_to_blocks(markdown):
         if striped != "":
             blocks_clean.append(striped)
     return blocks_clean
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    if blocks[0][:2] == "# ":
+        return blocks[0][2:].strip()
+    raise ValueError("Provided markdown does not have a header")
+    

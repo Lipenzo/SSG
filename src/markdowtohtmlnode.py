@@ -20,14 +20,14 @@ def quote_block_to_leafnode(block):
 
 def unorlist_block_to_HTMLNode(block):
     leafnode_list = []
-    for line in block.splitlines(True):
+    for line in block.splitlines():
         text = line[2:]
         leafnode_list.append(LeafNode("li", text))
     return HTMLNode("ul", children=leafnode_list)
 
 def ordlist_block_to_HTMLNode(block):
     leafnode_list = []
-    for line in block.splitlines(True):
+    for line in block.splitlines():
         text = line[len(line.split()[0]):]
         leafnode_list.append(LeafNode("li", text))
     return HTMLNode("ol", children=leafnode_list)

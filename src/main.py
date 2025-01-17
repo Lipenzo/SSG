@@ -1,8 +1,14 @@
 from os.path import exists, join, isfile
 from os import listdir, mkdir, remove
 from shutil import copy, rmtree
+from generate import generate_page
 
 def main():
+    purge_and_repopulate_public_dir()
+    generate_page("content/index.md", "template.html", "public/index.html")
+
+
+def purge_and_repopulate_public_dir():
     # need to clear public directory and then copy everything from static to public
     destination = "public"
     if not exists(destination):
@@ -15,7 +21,7 @@ def main():
         mkdir(destination)
     path = "static"
     recursive_copy(destination, path)
-    
+
 def recursive_copy(destination, current_folder):
     files = listdir(current_folder)
     for file in files:
@@ -29,5 +35,5 @@ def recursive_copy(destination, current_folder):
             mkdir(new_destination)
             print(f"directory made: {new_destination}")
             recursive_copy(new_destination, new_path)
-
+            
 main()

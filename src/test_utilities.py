@@ -1,6 +1,6 @@
 import unittest
 
-from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes, markdown_to_blocks
+from utilities import text_to_node_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, text_to_text_nodes, markdown_to_blocks, extract_title
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -199,6 +199,22 @@ class TestTextNode(unittest.TestCase):
         answer_block = markdown_to_blocks(imput_markdown)
         self.assertEqual(output_list, answer_block)
 
+    def test_extract_title(self):
+        markdown = "# Title"
+        expected_output = "Title"
+        output = extract_title(markdown)
+        self.assertEqual(expected_output, output)
+
+    def test_extract_title_more_complicated_markdown(self):
+        markdown = "\n\n#       Title    \n\nsome random text"
+        expected_output = "Title"
+        output = extract_title(markdown)
+        self.assertEqual(expected_output, output)
+
+    def test_extract_title_no_title(self):
+        markdown = "\n\n       Title    \n\nsome random text"
+        with self.assertRaises(ValueError):
+            extract_title(markdown)
 
 if __name__ == "__main__":
     unittest.main()

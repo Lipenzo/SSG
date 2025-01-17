@@ -6,8 +6,16 @@ class HTMLNode:
         self.props = props
 
     def to_html(self):
-        raise NotImplementedError
+        if self.children == None:
+            raise ValueError("Trying to generate html out of HTML node without any children")
+        return f"<{self.tag}>{self.__form_html_string_from_children()}</{self.tag}>"
     
+    def __form_html_string_from_children(self):
+        final_string = ""
+        for child in self.children:
+            final_string += child.to_html()
+        return final_string
+
     def props_to_html(self):   
         if self.props == None or len(self.props) == 0:
             return ""

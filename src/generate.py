@@ -1,6 +1,6 @@
 from utilities import extract_title
-from os.path import dirname
-from os import makedirs
+from os.path import dirname, join, isfile
+from os import makedirs, listdir
 from markdowtohtmlnode import markdown_to_html_node
 
 def generate_page(from_path, template_path, dest_path):
@@ -17,3 +17,14 @@ def generate_page(from_path, template_path, dest_path):
     makedirs(dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
         f.write(template)
+
+def generate_pages_recursively(dir_path_content, template_path, dest_dir_path):
+    for file in listdir(dir_path_content):
+        file_path = join(dir_path_content, file)
+        dest_path = join(dest_dir_path, file)
+        new_file_name = "".join(file.split(".")[:-1])+".html"
+        New_file_path = join(dest_dir_path, new_file_name)
+        if isfile(file_path):
+            generate_page(file_path, template_path, New_file_path)
+        else:
+            generate_pages_recursively(file_path, template_path, dest_path)

@@ -1,11 +1,11 @@
 from os.path import exists, join, isfile
 from os import listdir, mkdir, remove
 from shutil import copy, rmtree
-from generate import generate_page
+from generate import generate_pages_recursively
 
 def main():
     purge_and_repopulate_public_dir()
-    generate_page("content/index.md", "template.html", "public/index.html")
+    generate_pages_recursively("content", "template.html", "public")
 
 
 def purge_and_repopulate_public_dir():
@@ -35,5 +35,5 @@ def recursive_copy(destination, current_folder):
             mkdir(new_destination)
             print(f"directory made: {new_destination}")
             recursive_copy(new_destination, new_path)
-            
+
 main()
